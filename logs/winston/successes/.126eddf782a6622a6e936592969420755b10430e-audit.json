@@ -1,0 +1,130 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\.126eddf782a6622a6e936592969420755b10430e-audit.json",
+    "files": [
+        {
+            "date": 1688067907492,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-01-success.log",
+            "hash": "26e84ec1bf250f39de1b77606062d0d42841165b86e974b8cb25d74984e99462"
+        },
+        {
+            "date": 1688068808215,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-02-success.log",
+            "hash": "f167f2da4295bcfc1c17c89caef174a0923502a5bebb9700b9bbe8e53111b525"
+        },
+        {
+            "date": 1688072401304,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-03-success.log",
+            "hash": "c14f2ee3a2fbf5093d677f2ca2a1a7ae66a4cf7355666f16b91d329ba5a3750d"
+        },
+        {
+            "date": 1688080377642,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-05-success.log",
+            "hash": "364c34f4e85184dc879725f99c43bdad313f631d0eb216b3944ca3d53f923d9c"
+        },
+        {
+            "date": 1688100515756,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-10-success.log",
+            "hash": "4d4206695c9b71029a936c696a3bce731a4be50a47d910c73fc626245371d7e4"
+        },
+        {
+            "date": 1688102673675,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-11-success.log",
+            "hash": "fbd25d0577515051b51c6ea01e1e3fc5f8087e4a10e6d93fdc0f7ff7f18d773a"
+        },
+        {
+            "date": 1688105285926,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-12-success.log",
+            "hash": "2ebe7dbf2d88ae8085b9418a9d67a193832deaf44934c4c669beb9f22b37c121"
+        },
+        {
+            "date": 1688127070768,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-30-06-18-success.log",
+            "hash": "5124b93d34cde32a880566299b561d206e396280f02d357f7b62989563cfa650"
+        },
+        {
+            "date": 1688150113527,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-00-success.log",
+            "hash": "569e50fe2bb805aa73d176015ff7091131c63855549c1d0ff1f5757459a0c6ab"
+        },
+        {
+            "date": 1688152002252,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-01-success.log",
+            "hash": "4c8292f44033ffb9e9f4f17b4f57ab244babb22cbaec062559f19abf8e065d8f"
+        },
+        {
+            "date": 1688198387325,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-13-success.log",
+            "hash": "6daae62ef4d91b30f534b5b30ba39b22d9f44d317813c8f2ac15ba98406f85fb"
+        },
+        {
+            "date": 1688198639204,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-14-success.log",
+            "hash": "9ceb0b73df5031e66b2c12f9b101724366a79ef33ded8ade0f6fcf5fd82eeb3c"
+        },
+        {
+            "date": 1688202780684,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-15-success.log",
+            "hash": "cddc0f01a0a241a9d0d9b5a77691f8870891810499554d92cf3dfdd571c67bc2"
+        },
+        {
+            "date": 1688207158822,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-01-07-16-success.log",
+            "hash": "7a652252664d6450e562b2456e0c00524d9ef881690862f0d5a77cbfb684ca77"
+        },
+        {
+            "date": 1688283696839,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-02-07-13-success.log",
+            "hash": "9c6ae0546c5405a9869bc2d8f3932a9ce7a77fa7d6e50cc1a09495fb24714c4d"
+        },
+        {
+            "date": 1688330094427,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-02-success.log",
+            "hash": "73ebb9fff8f04ead83161e4a03d4c359f61597acaca738cc3c6c4f6e4e8b482b"
+        },
+        {
+            "date": 1688331832872,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-03-success.log",
+            "hash": "391084a737904a21e4319d00da74ac926683984d875b1ef1e38a6fc69800ef84"
+        },
+        {
+            "date": 1688357570733,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-10-success.log",
+            "hash": "36273e0af6b185d3707b46a2aaab4eef3005a0922ee205185d9eba9ce86cd187"
+        },
+        {
+            "date": 1688360407724,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-11-success.log",
+            "hash": "c3ac1e243e334f5963dc58d24c4937d339ce9a79fae2d23346d7d149b0dd05fb"
+        },
+        {
+            "date": 1688365032350,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-12-success.log",
+            "hash": "4d165c14f6675a05be22b415e1daadb1ffb5ac581aa6a9cdf3b641ae4fe129a0"
+        },
+        {
+            "date": 1688386430724,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-18-success.log",
+            "hash": "209d2df887d9c10d434c7e58bab9b497473325356e7d46eb737b9c18f77c2eb0"
+        },
+        {
+            "date": 1688390978715,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-19-success.log",
+            "hash": "39c6794903d295fd2ec58841e4c95db48d150766180dc143075ef23f5f6e8640"
+        },
+        {
+            "date": 1688393247503,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-20-success.log",
+            "hash": "e9d746f772fa07f02259d7abc2b4b1d0b8d46fa067fc8d863892cc891f546597"
+        },
+        {
+            "date": 1688396610732,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\successes\\CH-2023-03-07-21-success.log",
+            "hash": "42f6d1688cbfb6bb9173e705fab6c999525664ae9c9a6041a46e9babf4deff1c"
+        }
+    ],
+    "hashType": "sha256"
+}

@@ -1,0 +1,35 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\.341150221aa209ab44b0e2c4ad7516427c93d018-audit.json",
+    "files": [
+        {
+            "date": 1688046360911,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\phu-2023-29-06-19-error.log",
+            "hash": "780348577e5d79fd034327193990d44f0ca58c5b792bac491230590cfdfd085b"
+        },
+        {
+            "date": 1688047533941,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\phu-2023-29-06-20-error.log",
+            "hash": "e0fa24f7566c19f722a127618b96edb69dc50f1557f42a1450df753e6574958f"
+        },
+        {
+            "date": 1688051027851,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\phu-2023-29-06-21-error.log",
+            "hash": "66d90ddc258d8b103b53f01acc005679376b0a3019c4a94044cb4f3966440f6a"
+        },
+        {
+            "date": 1688064423155,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\phu-2023-30-06-00-error.log",
+            "hash": "3c957ba6571eb5406e838e20ec9bc1116d8096fe2a5e99bb712e1d9f8ac4e0d7"
+        },
+        {
+            "date": 1688066070423,
+            "name": "G:\\New File\\TypeScript\\digital-cow-server\\logs\\winston\\error\\phu-2023-30-06-01-error.log",
+            "hash": "3e0af21f58cc9a09e951c8f017eef6fab615534c446a9ca7da900004fbd82261"
+        }
+    ],
+    "hashType": "sha256"
+}
