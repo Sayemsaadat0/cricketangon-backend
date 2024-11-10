@@ -1,0 +1,71 @@
+import { Request, Response } from 'express';
+import httpStatus from 'http-status';
+import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
+import { UserService } from './user.service';
+
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  const user = req.body;
+  const result = await UserService.createUser(user);
+  console.log(result);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'User created successfully',
+    success: true,
+    data: result,
+  });
+});
+
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const filters = req.query;
+  const paginationOptions = req.query;
+  const users = await UserService.getAllUsers(filters as any, paginationOptions as any);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Users retrieved successfully',
+    success: true,
+    data: users,
+  });
+});
+
+const getUserById = catchAsync(async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+  const user = await UserService.getUserById(userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'User retrieved successfully',
+    success: true,
+    data: user,
+  });
+});
+
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+  const userUpdates = req.body;
+  await UserService.updateUser(userId, userUpdates);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'User updated successfully',
+    success: true,
+    data: null,
+  });
+});
+
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+  await UserService.deleteUser(userId);
+  sendResponse(res, {
+    statusCode: httpStatus.NO_CONTENT,
+    message: 'User deleted successfully',
+    success: true,
+    data: null,
+  });
+});
+
+export const UserController = {
+  createUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+};
