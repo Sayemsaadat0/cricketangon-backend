@@ -15,9 +15,7 @@ const createUserZodSchema = z.object({
       required_error: 'Role is required',
     }),
     image: z.string().optional(),
-    address: z.string({
-      required_error: 'Address is required',
-    }),
+    address: z.string().optional(),
   }),
 });
 

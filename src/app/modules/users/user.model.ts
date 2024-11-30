@@ -12,13 +12,14 @@ const createUser = (user: IUser): Promise<IUser> => {
       UserQueries.CREATE_USER,
       [name, email, password, role, image, address],
       err => {
-        if (err)
+        if (err) {
           return reject(
             new ApiError(
               httpStatus.INTERNAL_SERVER_ERROR,
               'Error creating user'
             )
-          )
+          );
+        }
         const newUser = {
           name,
           email,
@@ -80,7 +81,7 @@ const getUserById = (id: number): Promise<IUser | null> => {
   })
 }
 
-const updateUser = (id: number, userUpdates: Partial<IUser>): Promise<void> => {
+const updateUser = (id: number, userUpdates: Partial<IUser>): Promise<IUser> => {
   const { name, email, password, role, image, address } = userUpdates
   return new Promise((resolve, reject) => {
     connection.query(
@@ -96,11 +97,11 @@ const updateUser = (id: number, userUpdates: Partial<IUser>): Promise<void> => {
             )
           )
         const { affectedRows } = results as RowDataPacket
+        console.log(affectedRows)
         if (affectedRows === 0) {
           return reject(new ApiError(httpStatus.NOT_FOUND, 'User not found'))
         }
-
-        resolve()
+        resolve(affectedRows)
       }
     )
   })

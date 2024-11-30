@@ -8,7 +8,9 @@ const createTableQuery = `
     password VARCHAR(255) NOT NULL,
     role ENUM('user', 'admin', 'super_admin') NOT NULL,
     image VARCHAR(255) NULL,
-    address TEXT NOT NULL
+    address TEXT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   );
 `;
 
