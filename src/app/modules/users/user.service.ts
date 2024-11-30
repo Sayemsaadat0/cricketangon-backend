@@ -2,7 +2,6 @@
 import bcrypt from 'bcrypt'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import config from '../../../config'
 import connection from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
@@ -14,6 +13,7 @@ import { UserModel } from './user.model'
 
 const createUser = async (user: IUser): Promise<IUser> => {
   try {
+   
     const emailCheckQuery = `SELECT * FROM users WHERE email = ?`
     const [existingUser] = await connection
       .promise()
@@ -21,14 +21,17 @@ const createUser = async (user: IUser): Promise<IUser> => {
 
     if ((existingUser as RowDataPacket[]).length > 0) {
       throw new ApiError(httpStatus.CONFLICT, 'Email already exists')
+    }else{
+      const hashedPassword = await bcrypt.hash(
+        user.password,
+       12
+      )
+      user.password = hashedPassword
+      console.log(user)
+      const newUser = await UserModel.createUser(user)
+      return newUser
     }
-    const hashedPassword = await bcrypt.hash(
-      user.password,
-      config.bcrypt_salt_round as string
-    )
-    user.password = hashedPassword
-    const newUser = await UserModel.createUser(user)
-    return newUser
+    
   } catch (error: any) {
     if (error.statusCode === 409) {
       throw new ApiError(httpStatus.CONFLICT, 'Email already exists')
@@ -217,17 +220,19 @@ const updateUser = async (
   }
 }
 
-const deleteUser = async (id: number): Promise<void> => {
+const deleteUser = async (id: number): Promise<IUser> => {
   try {
-    const user = await UserModel.getUserById(id)
+    const user = await UserModel.deleteUser(id);
     if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
     }
-    await UserModel.deleteUser(id)
+    return user; 
   } catch (error) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error deleting user')
+    console.log(error , " line 231")
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error deleting user');
   }
-}
+};
+
 
 export const UserService = {
   createUser,
