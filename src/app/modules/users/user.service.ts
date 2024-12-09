@@ -13,7 +13,6 @@ import { UserModel } from './user.model'
 
 const createUser = async (user: IUser): Promise<IUser> => {
   try {
-   
     const emailCheckQuery = `SELECT * FROM users WHERE email = ?`
     const [existingUser] = await connection
       .promise()

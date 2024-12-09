@@ -6,7 +6,7 @@ import { UserQueries } from '../../../queries/userQueries'
 import { IUser } from './user.interface'
 
 const createUser = (user: IUser): Promise<IUser> => {
-  console.log(user)
+  console.log(user,"Line 9")
   const { name, email, password, role, image, address } = user
   return new Promise((resolve, reject) => {
     connection.query(
@@ -14,6 +14,7 @@ const createUser = (user: IUser): Promise<IUser> => {
       [name, email, password, role, image, address],
       err => {
         if (err) {
+         
           return reject(
             new ApiError(
               httpStatus.INTERNAL_SERVER_ERROR,
