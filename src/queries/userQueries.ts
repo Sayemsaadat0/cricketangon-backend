@@ -20,5 +20,8 @@ export const UserQueries = {
 
   GET_ALL_USERS: `
     SELECT id, name, email, role, image, address, created_at, updated_at FROM users
-  `
-};
+  `,
+  FIND_USER_BY_EMAIL: `
+    SELECT id, name, email, password, role, image, address, created_at, updated_at FROM users WHERE email = ?
+  `,
+}
