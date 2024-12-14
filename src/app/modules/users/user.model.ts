@@ -6,7 +6,6 @@ import { UserQueries } from '../../../queries/userQueries'
 import { IUser } from './user.interface'
 
 const createUser = (user: IUser): Promise<IUser> => {
-  console.log(user,"Line 9")
   const { name, email, password, role, image, address } = user
   return new Promise((resolve, reject) => {
     connection.query(
@@ -14,13 +13,12 @@ const createUser = (user: IUser): Promise<IUser> => {
       [name, email, password, role, image, address],
       err => {
         if (err) {
-         
           return reject(
             new ApiError(
               httpStatus.INTERNAL_SERVER_ERROR,
               'Error creating user'
             )
-          );
+          )
         }
         const newUser = {
           name,
@@ -30,6 +28,7 @@ const createUser = (user: IUser): Promise<IUser> => {
           image,
           address,
         }
+        console.log(newUser)
         resolve(newUser)
       }
     )
@@ -83,7 +82,10 @@ const getUserById = (id: number): Promise<IUser | null> => {
   })
 }
 
-const updateUser = (id: number, userUpdates: Partial<IUser>): Promise<IUser> => {
+const updateUser = (
+  id: number,
+  userUpdates: Partial<IUser>
+): Promise<IUser> => {
   const { name, email, password, role, image, address } = userUpdates
   return new Promise((resolve, reject) => {
     connection.query(
@@ -111,7 +113,6 @@ const updateUser = (id: number, userUpdates: Partial<IUser>): Promise<IUser> => 
 
 const deleteUser = (id: number): Promise<IUser> => {
   return new Promise((resolve, reject) => {
-  
     connection.query(UserQueries.GET_USER_BY_ID, [id], (err, results) => {
       if (err) {
         return reject(
@@ -120,14 +121,14 @@ const deleteUser = (id: number): Promise<IUser> => {
             'Error retrieving user before deletion',
             err.stack
           )
-        );
+        )
       }
 
-      const rows = results as RowDataPacket[];
-      const user = rows.length > 0 ? (rows[0] as IUser) : null;
+      const rows = results as RowDataPacket[]
+      const user = rows.length > 0 ? (rows[0] as IUser) : null
 
       if (!user) {
-        return reject(new ApiError(httpStatus.NOT_FOUND, 'User not found'));
+        return reject(new ApiError(httpStatus.NOT_FOUND, 'User not found'))
       }
 
       connection.query(UserQueries.DELETE_USER, [id], deleteErr => {
@@ -138,15 +139,13 @@ const deleteUser = (id: number): Promise<IUser> => {
               'Error deleting user',
               deleteErr.stack
             )
-          );
+          )
         }
-        resolve(user);
-      });
-    });
-  });
-};
-
-
+        resolve(user)
+      })
+    })
+  })
+}
 
 export const UserModel = {
   createUser,

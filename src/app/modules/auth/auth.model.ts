@@ -26,7 +26,9 @@ const getUserByEmail = (email: string): Promise<IUser | null> => {
     })
   }
 
+ 
+
 
   export const AuthModel={
-    getUserByEmail
+    getUserByEmail,
   }

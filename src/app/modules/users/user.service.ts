@@ -20,21 +20,18 @@ const createUser = async (user: IUser): Promise<IUser> => {
 
     if ((existingUser as RowDataPacket[]).length > 0) {
       throw new ApiError(httpStatus.CONFLICT, 'Email already exists')
-    }else{
-      const hashedPassword = await bcrypt.hash(
-        user.password,
-       12
-      )
+    } else {
+      const hashedPassword = await bcrypt.hash(user.password, 12)
       user.password = hashedPassword
       console.log(user)
       const newUser = await UserModel.createUser(user)
       return newUser
     }
-    
   } catch (error: any) {
     if (error.statusCode === 409) {
       throw new ApiError(httpStatus.CONFLICT, 'Email already exists')
     }
+    console.log(error)
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error creating user')
   }
 }
@@ -221,17 +218,16 @@ const updateUser = async (
 
 const deleteUser = async (id: number): Promise<IUser> => {
   try {
-    const user = await UserModel.deleteUser(id);
+    const user = await UserModel.deleteUser(id)
     if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
     }
-    return user; 
+    return user
   } catch (error) {
-    console.log(error , " line 231")
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error deleting user');
+    console.log(error, ' line 231')
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error deleting user')
   }
-};
-
+}
 
 export const UserService = {
   createUser,

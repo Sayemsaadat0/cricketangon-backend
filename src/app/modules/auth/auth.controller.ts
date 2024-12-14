@@ -4,6 +4,7 @@ import config from "../../../config";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { AuthService } from "./auth.service";
+import ApiError from "../../../errors/ApiError";
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const { ...loginData } = req.body;
@@ -30,6 +31,34 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     });
   });
 
+
+  const refreshToken = catchAsync(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    if (!refreshToken) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Refresh token is required');
+    }
+    const result = await AuthService.refreshAccessToken(refreshToken);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Token refreshed successfully',
+      data: result,
+    });
+  });
+
+  const sendVerificationCode = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+  
+    const result = await AuthService.sendVerificationCode(email);
+  
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: result.message,
+    });
+  });
   export const AuthController={
-    loginUser
+    loginUser,
+    refreshToken,
+    sendVerificationCode
   }
