@@ -28,7 +28,6 @@ const createUser = (user: IUser): Promise<IUser> => {
           image,
           address,
         }
-        console.log(newUser)
         resolve(newUser)
       }
     )

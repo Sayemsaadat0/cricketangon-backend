@@ -25,8 +25,42 @@ const ForgotPasswordSchema = z.object({
     }),
   }),
 })
+
+const VerifyCodeSchema=z.object({
+  body:z.object({
+    email: z.string({
+      required_error: 'Email is required',
+    }),
+    code: z.string({
+      required_error: 'Verification code is required',
+    }),
+  })
+})
+const ResetPasswordSchema=z.object({
+  body:z.object({
+    email: z.string({
+      required_error: 'Email is required',
+    }),
+    newPassword: z.string({
+      required_error: 'New Password is required',
+    }),
+  })
+})
+const ChangePasswordSchema=z.object({
+  body:z.object({
+    oldPassword: z.string({
+      required_error: 'Old Password is required',
+    }),
+    newPassword: z.string({
+      required_error: 'New Password is required',
+    }),
+  })
+})
 export const AuthValidation = {
   LoginZodSchema,
   refreshTokenZodSchema,
   ForgotPasswordSchema,
+  ResetPasswordSchema,
+  VerifyCodeSchema,
+  ChangePasswordSchema
 }

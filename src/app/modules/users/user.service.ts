@@ -23,7 +23,6 @@ const createUser = async (user: IUser): Promise<IUser> => {
     } else {
       const hashedPassword = await bcrypt.hash(user.password, 12)
       user.password = hashedPassword
-      console.log(user)
       const newUser = await UserModel.createUser(user)
       return newUser
     }
