@@ -45,7 +45,8 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
   const updateCategory = catchAsync(async (req: Request, res: Response) => {
     const categoryId = Number(req.params.id);
     const categoryUpdates = req.body;
-    const category = await CategoryService.updateCategory(categoryId, categoryUpdates);
+    const file = req.file;
+    const category = await CategoryService.updateCategory(categoryId, categoryUpdates, file);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       message: 'Category updated successfully',
