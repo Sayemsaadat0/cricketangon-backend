@@ -35,63 +35,6 @@ const createUser = async (user: IUser): Promise<Partial<IUser>> => {
   }
 }
 
-// const getAllUsers = async (
-//   filters: IUserFilter,
-//   paginationOptions: IPaginationOptions
-// ): Promise<IGenericResponse<IUser[]>> => {
-//   try {
-//     const { searchTerm, ...filtersData } = filters;
-//     const { page, limit, skip, sortBy, sortOrder } = paginationHelpers.calculatePagination(paginationOptions);
-//     const whereConditions: string[] = [];
-//     const queryParams:any[] = [];
-
-//     if (searchTerm) {
-//       const searchConditions = UserSearchableFields.map((field) => `${field} LIKE ?`).join(' OR ');
-//       whereConditions.push(`(${searchConditions})`);
-//       queryParams.push(...UserSearchableFields.map(() => `%${searchTerm}%`));
-//     }
-
-//     if (Object.keys(filtersData).length > 0) {
-//       Object.entries(filtersData).forEach(([field, value]) => {
-//         whereConditions.push(`${field} = ?`);
-//         queryParams.push(value);
-//       });
-//     }
-
-//     const sortConditions = sortBy ? `ORDER BY ${sortBy} ${sortOrder}` : '';
-//     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
-//     const query = `SELECT * FROM users ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`;
-//     queryParams.push(limit, skip);
-
-//     const [results] = await connection.promise().query(query, queryParams);
-//     const users = results as RowDataPacket[];
-
-//     const mappedUsers: IUser[] = users.map((row) => ({
-//       id: row.id,
-//       name: row.name,
-//       email: row.email,
-//       password: row.password,
-//       role: row.role,
-//       image: row.image,
-//       address: row.address,
-//     }));
-
-//     const countQuery = `SELECT COUNT(*) AS total FROM users ${whereClause}`;
-//     const [countResults] = await connection.promise().query(countQuery, queryParams);
-//     const total = (countResults as RowDataPacket[])[0].total;
-
-//     return {
-//       meta: {
-//         page,
-//         limit,
-//         total,
-//       },
-//       data: mappedUsers,
-//     };
-//   } catch (error) {
-//     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve users');
-//   }
-// };
 
 const getAllUsers = async (
   filters: IUserFilter,
