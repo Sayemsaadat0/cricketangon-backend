@@ -11,7 +11,7 @@ import { IUserFilter, UserSearchableFields } from './user.constant'
 import { IUser } from './user.interface'
 import { UserModel } from './user.model'
 
-const createUser = async (user: IUser): Promise<IUser> => {
+const createUser = async (user: IUser): Promise<Partial<IUser>> => {
   try {
     const emailCheckQuery = `SELECT * FROM users WHERE email = ?`
     const [existingUser] = await connection
