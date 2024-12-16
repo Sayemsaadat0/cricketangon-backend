@@ -8,13 +8,13 @@ const createCategory = z.object({
 
 const getCategoryById = z.object({
   params: z.object({
-    id: z.number({ required_error: 'Category ID is required' }).int(),
+    id: z.string({ required_error: 'Category ID is required' }),
   }),
 });
 
 const updateCategory = z.object({
   params: z.object({
-    id: z.number({ required_error: 'Category ID is required' }).int(),
+    id: z.string({ required_error: 'Category ID is required' }),
   }),
   body: z.object({
     name: z.string().optional(),
@@ -23,7 +23,7 @@ const updateCategory = z.object({
 
 const deleteCategory = z.object({
   params: z.object({
-    id: z.number({ required_error: 'Category ID is required' }).int(),
+    id: z.string({ required_error: 'Category ID is required' }),
   }),
 });
 
