@@ -3,5 +3,4 @@ export type IStats={
     title:string;
     image:string;
     description:string;
-    userId:number;
 }

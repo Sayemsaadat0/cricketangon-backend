@@ -8,6 +8,7 @@ export type ICategoryFilter = {
   ]
 
   export const CategoryFilterableFields = [
+    "searhTerm",
     "name",
    
   ]
