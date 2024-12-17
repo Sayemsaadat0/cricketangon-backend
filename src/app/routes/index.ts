@@ -1,8 +1,9 @@
 import express from 'express'
+import { ArticleRoutes } from '../modules/article/article.route'
 import { LoginRoutes } from '../modules/auth/auth.route'
 import { CategoryRoutes } from '../modules/category/category.route'
+import { photoRoutes } from '../modules/photos/photos.route'
 import { userRoutes } from '../modules/users/user.route'
-import { ArticleRoutes } from '../modules/article/article.route'
 
 const router = express.Router()
 
@@ -22,7 +23,11 @@ const moduleRoutes = [
   {
     path:'/article',
     route:ArticleRoutes
-  }
+  },
+  {
+    path:'/photos',
+    route:photoRoutes
+  },
 
 ]
 moduleRoutes.forEach(route => router.use(route.path, route.route))

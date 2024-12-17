@@ -1,3 +1,4 @@
-export type IPhotos={
-    image:string;
+export type IPhotos = {
+  image: string
+  category: 'regular' | 'moment'
 }
