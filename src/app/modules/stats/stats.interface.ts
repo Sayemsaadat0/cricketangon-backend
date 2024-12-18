@@ -1,6 +1,6 @@
 export type IStats={
     authorName:string;
     title:string;
-    image:string;
+    image?:string;
     description:string;
 }

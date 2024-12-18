@@ -3,7 +3,7 @@ export type IArticle={
     authorName:string;
     title:string;
     categoryId:number;
-    image:string;
+    image?:string;
     description:string;
     userId:number;
 }

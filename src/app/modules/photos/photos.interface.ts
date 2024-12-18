@@ -1,4 +1,4 @@
 export type IPhotos = {
-  image: string
+  image?: string
   category: 'regular' | 'moment'
 }
