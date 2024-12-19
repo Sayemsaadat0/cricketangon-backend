@@ -5,5 +5,5 @@ export type IUser = {
   password: string
   role: 'user' | 'admin' | 'super_admin'
   image?: string
-  address: string
+  address?: string
 }

@@ -40,6 +40,8 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
         email: user.email,
         role: user.role,
         id: user.id,
+        image:user.image,
+        address:user.address
       },
       config.jwt_secret as string,
       config.jwt_expires_in as string
@@ -50,6 +52,8 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
         email: user.email,
         role: user.role,
         id: user.id,
+        image:user.image,
+        address:user.address
       },
       config.jwt_refresh_secret as string,
       config.jwt_refresh_expires_in as string
