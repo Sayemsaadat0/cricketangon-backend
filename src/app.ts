@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express, { Application, NextFunction, Request, Response } from 'express'
 import httpStatus from 'http-status'
+import path from 'path'
 import globalErrorHandler from './app/middlewares/globalErrorHandler'
 import router from './app/routes'
 
@@ -12,7 +13,7 @@ app.use(cookieParser())
 //parser
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api/v1/', router)
 app.use(globalErrorHandler)
 
