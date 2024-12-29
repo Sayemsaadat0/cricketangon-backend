@@ -1,22 +1,20 @@
-import { z } from 'zod';
-
+import { z } from 'zod'
 
 const createArticle = z.object({
   body: z.object({
     title: z.string().min(1, 'Title is required'),
     description: z.string().min(1, 'Description is required'),
     categoryId: z.number().int().min(1, 'Category ID is required'),
+    authorName: z.string().min(1, 'Author Name is required'),
     userId: z.number().int().min(1, 'User ID is required'),
   }),
-});
-
+})
 
 const getArticleById = z.object({
   params: z.object({
     id: z.string({ required_error: 'Article ID is required' }),
   }),
-});
-
+})
 
 const updateArticle = z.object({
   params: z.object({
@@ -26,17 +24,16 @@ const updateArticle = z.object({
     title: z.string().min(1, 'Title is required').optional(),
     description: z.string().min(1, 'Description is required').optional(),
     categoryId: z.number().int().min(1, 'Category ID is required').optional(),
+    authorName: z.number().min(1, 'Author Name is required').optional(),
     userId: z.number().int().min(1, 'User ID is required').optional(),
   }),
-});
-
+})
 
 const deleteArticle = z.object({
   params: z.object({
     id: z.string({ required_error: 'Article ID is required' }),
   }),
-});
-
+})
 
 const getAllArticles = z.object({
   query: z.object({
@@ -46,7 +43,7 @@ const getAllArticles = z.object({
     sortBy: z.string().optional(),
     sortOrder: z.string().optional(),
   }),
-});
+})
 
 export const articleValidation = {
   createArticle,
@@ -54,4 +51,4 @@ export const articleValidation = {
   updateArticle,
   deleteArticle,
   getAllArticles,
-};
+}
