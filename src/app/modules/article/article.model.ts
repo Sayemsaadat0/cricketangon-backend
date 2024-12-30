@@ -7,11 +7,19 @@ import { IArticle } from './article.interface'
 
 const createArticle = (article: IArticle): Promise<Partial<IArticle>> => {
   console.log('log article', article)
-  const { authorName, title, categoryId, image, description, userId } = article
+  const {
+    authorName,
+    title,
+    categoryId,
+    image,
+    isApproved,
+    description,
+    userId,
+  } = article
   return new Promise((resolve, reject) => {
     connection.query(
       ArticleQueries.CREATE_ARTICLE,
-      [authorName, title, categoryId, image, description, userId],
+      [authorName, title, categoryId, image, description, userId, isApproved],
       (err, results) => {
         if (err) {
           return reject(

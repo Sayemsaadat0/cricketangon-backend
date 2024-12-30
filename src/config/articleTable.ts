@@ -1,4 +1,4 @@
-import connection from './db';
+import connection from './db'
 
 const createArticlesTableQuery = `
  CREATE TABLE articles (
@@ -9,18 +9,19 @@ const createArticlesTableQuery = `
   image VARCHAR(255),
   description TEXT,
   userId INT NOT NULL,
+  isApproved BOOLEAN NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE CASCADE,
   FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
-`;
+`
 
 connection.query(createArticlesTableQuery, (err, result) => {
   if (err) {
-    console.error('Error creating articles table:', err);
+    console.error('Error creating articles table:', err)
   } else {
-    console.log('Articles table created successfully:', result);
+    console.log('Articles table created successfully:', result)
   }
-  connection.end();
-});
+  connection.end()
+})

@@ -1,10 +1,10 @@
 export const ArticleQueries = {
-    CREATE_ARTICLE: `
-      INSERT INTO articles (authorName, title, categoryId, image, description, userId, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+  CREATE_ARTICLE: `
+      INSERT INTO articles (authorName, title, categoryId, image, description,	userId, isApproved, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `,
-  
-    GET_ARTICLE_BY_ID: `
+
+  GET_ARTICLE_BY_ID: `
       SELECT 
         articles.id,
         articles.authorName,
@@ -12,6 +12,7 @@ export const ArticleQueries = {
         articles.image,
         articles.description,
         articles.userId,
+        articles.isApproved,
         articles.created_at,
         articles.updated_at,
         categories.id AS categoryId,
@@ -33,8 +34,8 @@ export const ArticleQueries = {
       WHERE 
         articles.id = ?
     `,
-  
-    UPDATE_ARTICLE: `
+
+  UPDATE_ARTICLE: `
       UPDATE articles
       SET 
         authorName = ?, 
@@ -42,16 +43,17 @@ export const ArticleQueries = {
         categoryId = ?, 
         image = ?, 
         description = ?, 
+        isApproved = ?, 
         userId = ?, 
         updated_at = NOW()
       WHERE id = ?
     `,
-  
-    DELETE_ARTICLE: `
+
+  DELETE_ARTICLE: `
       DELETE FROM articles WHERE id = ?
     `,
-  
-    GET_ALL_ARTICLES: `
+
+  GET_ALL_ARTICLES: `
       SELECT 
         articles.id,
         articles.authorName,
@@ -59,6 +61,7 @@ export const ArticleQueries = {
         articles.image,
         articles.description,
         articles.userId,
+        articles.isApproved,
         articles.created_at,
         articles.updated_at,
         categories.id AS categoryId,
@@ -78,5 +81,4 @@ export const ArticleQueries = {
       ON 
         articles.userId = users.id
     `,
-  };
-  
+}
