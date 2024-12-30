@@ -4,9 +4,9 @@ const createArticle = z.object({
   body: z.object({
     title: z.string().min(1, 'Title is required'),
     description: z.string().min(1, 'Description is required'),
-    categoryId: z.number().int().min(1, 'Category ID is required'),
+    categoryId: z.string().min(1, 'Category ID is required'),
     authorName: z.string().min(1, 'Author Name is required'),
-    userId: z.number().int().min(1, 'User ID is required'),
+    userId: z.string().min(1, 'User ID is required'),
   }),
 })
 
