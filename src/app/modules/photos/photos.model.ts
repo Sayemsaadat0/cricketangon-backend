@@ -1,31 +1,27 @@
-import httpStatus from 'http-status';
-import { RowDataPacket } from 'mysql2';
-import connection from '../../../config/db';
-import ApiError from '../../../errors/ApiError';
-import { IPhotos } from './photos.interface';
-import { PhotoQueries } from '../../../queries/photosQueries';
-
+import httpStatus from 'http-status'
+import { RowDataPacket } from 'mysql2'
+import connection from '../../../config/db'
+import ApiError from '../../../errors/ApiError'
+import { PhotoQueries } from '../../../queries/photosQueries'
+import { IPhotos } from './photos.interface'
 
 const createPhoto = (photo: IPhotos): Promise<Partial<IPhotos>> => {
-  const { image, category } = photo;
+  const { image, category } = photo
   return new Promise((resolve, reject) => {
     connection.query(PhotoQueries.CREATE_PHOTO, [image, category], err => {
       if (err) {
         return reject(
-          new ApiError(
-            httpStatus.INTERNAL_SERVER_ERROR,
-            'Error creating photo'
-          )
-        );
+          new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error creating photo')
+        )
       }
       const newPhoto = {
         image,
         category,
-      };
-      resolve(newPhoto);
-    });
-  });
-};
+      }
+      resolve(newPhoto)
+    })
+  })
+}
 
 const getAllPhotos = (): Promise<IPhotos[]> => {
   return new Promise((resolve, reject) => {
@@ -37,18 +33,18 @@ const getAllPhotos = (): Promise<IPhotos[]> => {
             'Error retrieving photos',
             err.stack
           )
-        );
+        )
 
-      const rows = results as RowDataPacket[];
+      const rows = results as RowDataPacket[]
       if (rows.length === 0) {
-        return reject(new ApiError(httpStatus.NOT_FOUND, 'No photos found'));
+        return reject(new ApiError(httpStatus.NOT_FOUND, 'No photos found'))
       }
 
-      const photos = rows.map(row => row as IPhotos);
-      resolve(photos);
-    });
-  });
-};
+      const photos = rows.map(row => row as IPhotos)
+      resolve(photos)
+    })
+  })
+}
 
 const getPhotoById = (id: number): Promise<IPhotos | null> => {
   return new Promise((resolve, reject) => {
@@ -60,25 +56,25 @@ const getPhotoById = (id: number): Promise<IPhotos | null> => {
             'Error retrieving photo',
             err.stack
           )
-        );
+        )
 
-      const rows = results as RowDataPacket[];
-      const photo = rows.length > 0 ? (rows[0] as IPhotos) : null;
+      const rows = results as RowDataPacket[]
+      const photo = rows.length > 0 ? (rows[0] as IPhotos) : null
 
       if (!photo) {
-        return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'));
+        return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'))
       }
 
-      resolve(photo);
-    });
-  });
-};
+      resolve(photo)
+    })
+  })
+}
 
 const updatePhoto = (
   id: number,
   photoUpdates: Partial<IPhotos>
 ): Promise<IPhotos> => {
-  const { image, category } = photoUpdates;
+  const { image, category } = photoUpdates
   return new Promise((resolve, reject) => {
     connection.query(
       PhotoQueries.UPDATE_PHOTO,
@@ -91,16 +87,16 @@ const updatePhoto = (
               'Error updating photo',
               err.stack
             )
-          );
-        const { affectedRows } = results as RowDataPacket;
+          )
+        const { affectedRows } = results as RowDataPacket
         if (affectedRows === 0) {
-          return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'));
+          return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'))
         }
-        resolve(affectedRows);
+        resolve(affectedRows)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 const deletePhoto = (id: number): Promise<IPhotos> => {
   return new Promise((resolve, reject) => {
@@ -112,14 +108,14 @@ const deletePhoto = (id: number): Promise<IPhotos> => {
             'Error retrieving photo before deletion',
             err.stack
           )
-        );
+        )
       }
 
-      const rows = results as RowDataPacket[];
-      const photo = rows.length > 0 ? (rows[0] as IPhotos) : null;
+      const rows = results as RowDataPacket[]
+      const photo = rows.length > 0 ? (rows[0] as IPhotos) : null
 
       if (!photo) {
-        return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'));
+        return reject(new ApiError(httpStatus.NOT_FOUND, 'Photo not found'))
       }
 
       connection.query(PhotoQueries.DELETE_PHOTO, [id], deleteErr => {
@@ -130,13 +126,13 @@ const deletePhoto = (id: number): Promise<IPhotos> => {
               'Error deleting photo',
               deleteErr.stack
             )
-          );
+          )
         }
-        resolve(photo);
-      });
-    });
-  });
-};
+        resolve(photo)
+      })
+    })
+  })
+}
 
 export const PhotoModel = {
   createPhoto,
@@ -144,4 +140,4 @@ export const PhotoModel = {
   getPhotoById,
   updatePhoto,
   deletePhoto,
-};
+}

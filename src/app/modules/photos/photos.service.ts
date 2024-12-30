@@ -43,7 +43,7 @@ const getAllPhotos = async (
         field => `${field} LIKE ?`
       ).join(' OR ')
       whereConditions.push(`(${searchConditions})`)
-      queryParams.push(...PhotoSearchableFields.map(() => `%${searchTerm}%`))
+      queryParams.push(`%${searchTerm}%`)
     }
 
     if (Object.keys(filtersData).length > 0) {
@@ -54,7 +54,7 @@ const getAllPhotos = async (
     }
 
     const sortConditions =
-      sortBy && ['id', 'category', 'createdAt'].includes(sortBy)
+      sortBy && ['id', 'category', 'created_at'].includes(sortBy)
         ? `ORDER BY ${sortBy} ${sortOrder || 'asc'}`
         : ''
 
@@ -122,8 +122,8 @@ const updatePhoto = async (
 ): Promise<IPhotos> => {
   try {
     if (file) {
-      photoUpdates.image = `/uploads/${file.filename}`;
-  }
+      photoUpdates.image = `/uploads/${file.filename}`
+    }
     const photo = await PhotoModel.updatePhoto(id, photoUpdates)
     if (!photo) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Photo not found')
