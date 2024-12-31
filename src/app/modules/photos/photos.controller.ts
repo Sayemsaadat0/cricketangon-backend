@@ -7,6 +7,7 @@ import { PhotoService } from './photos.service'
 const createPhoto = catchAsync(async (req: Request, res: Response) => {
   const photo = req.body
   const file = req.file
+  console.log({file, photo});
   const result = await PhotoService.createPhoto(photo, file)
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

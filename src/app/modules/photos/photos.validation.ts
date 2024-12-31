@@ -3,9 +3,9 @@ import { z } from 'zod';
 const PhotoCategories = ['regular', 'moment'] as const;
 const createPhotoZodSchema = z.object({
   body: z.object({
-    image: z.string({
-      required_error: 'Title is required',
-    }),
+    // image: z.string({
+    //   required_error: 'Photo is required',
+    // }),
     category: z.enum(PhotoCategories, {
         required_error: 'Category is required',
       }),
