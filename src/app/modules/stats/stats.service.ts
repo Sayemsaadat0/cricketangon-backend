@@ -57,7 +57,7 @@ const getAllStats = async (
 
     const whereClause =
       whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
-    const query = `SELECT id, title, authorName, description FROM stats ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
+    const query = `SELECT id, title,image, created_at, updated_at, authorName, description FROM stats ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
 
@@ -71,6 +71,8 @@ const getAllStats = async (
       title: row.title,
       image: row.image,
       description: row.description,
+      created_at : row.created_at ,
+      updated_at : row.updated_at
     }))
 
     const countQuery = `SELECT COUNT(*) AS total FROM stats ${whereClause}`
