@@ -1,4 +1,4 @@
-import connection from './db';
+import {connection} from './db';
 
 const createPhotosTableQuery = `
   CREATE TABLE IF NOT EXISTS photos (

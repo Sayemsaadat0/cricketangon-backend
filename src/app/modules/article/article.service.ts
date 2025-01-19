@@ -151,16 +151,20 @@ const getArticleById = async (
 
 const updateArticle = async (
   id: number,
-  articleUpdates: Partial<IArticle>
+  articleUpdates: Partial<IArticle>,
+  file?:Express.Multer.File
 ): Promise<IArticle> => {
   try {
-    // Filter out undefined fields
+    if(file){
+      articleUpdates.image=`uploads/${file.filename}`
+    }
+   
     const fields = Object.keys(articleUpdates)
       .filter((key) => articleUpdates[key as keyof IArticle] !== undefined)
       .map((key) => `${key} = ?`);
 
     const values = Object.values(articleUpdates).filter((value) => value !== undefined);
-    values.push(id); // Add the ID for the WHERE clause
+    values.push(id); 
 
     if (fields.length === 0) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'No updates provided');
