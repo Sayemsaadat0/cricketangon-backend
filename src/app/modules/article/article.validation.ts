@@ -23,7 +23,7 @@ const updateArticle = z.object({
     title: z.string().min(1, 'Title is required').optional(),
     description: z.string().min(1, 'Description is required').optional(),
     categoryId: z.number().int().min(1, 'Category ID is required').optional(),
-    authorName: z.number().min(1, 'Author Name is required').optional(),
+    authorName: z.string().min(1, 'Author Name is required').optional(),
     userId: z.number().int().min(1, 'User ID is required').optional(),
   }),
 })
