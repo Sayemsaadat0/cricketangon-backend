@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginValidation = void 0;
+exports.AuthValidation = void 0;
 const zod_1 = require("zod");
-const loginZodSchema = zod_1.z.object({
+const LoginZodSchema = zod_1.z.object({
     body: zod_1.z.object({
-        phoneNumber: zod_1.z.string({
-            required_error: 'Phone number is required',
+        email: zod_1.z.string({
+            required_error: 'Email is required',
         }),
         password: zod_1.z.string({
-            required_error: 'password is required',
+            required_error: 'Password is required',
         }),
     }),
 });
@@ -19,7 +19,48 @@ const refreshTokenZodSchema = zod_1.z.object({
         }),
     }),
 });
-exports.LoginValidation = {
-    loginZodSchema,
+const ForgotPasswordSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        email: zod_1.z.string({
+            required_error: 'Email is required',
+        }),
+    }),
+});
+const VerifyCodeSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        email: zod_1.z.string({
+            required_error: 'Email is required',
+        }),
+        code: zod_1.z.string({
+            required_error: 'Verification code is required',
+        }),
+    })
+});
+const ResetPasswordSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        email: zod_1.z.string({
+            required_error: 'Email is required',
+        }),
+        newPassword: zod_1.z.string({
+            required_error: 'New Password is required',
+        }),
+    })
+});
+const ChangePasswordSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        oldPassword: zod_1.z.string({
+            required_error: 'Old Password is required',
+        }),
+        newPassword: zod_1.z.string({
+            required_error: 'New Password is required',
+        }),
+    })
+});
+exports.AuthValidation = {
+    LoginZodSchema,
     refreshTokenZodSchema,
+    ForgotPasswordSchema,
+    ResetPasswordSchema,
+    VerifyCodeSchema,
+    ChangePasswordSchema
 };

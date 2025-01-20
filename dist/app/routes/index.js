@@ -4,36 +4,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const admin_route_1 = __importDefault(require("../modules/admin/admin.route"));
-const auth_route_1 = __importDefault(require("../modules/auth/auth.route"));
-const cow_route_1 = __importDefault(require("../modules/cow/cow.route"));
-const order_route_1 = __importDefault(require("../modules/order/order.route"));
-const user_route_1 = __importDefault(require("../modules/user/user.route"));
+const article_route_1 = require("../modules/article/article.route");
+const auth_route_1 = require("../modules/auth/auth.route");
+const category_route_1 = require("../modules/category/category.route");
+const photos_route_1 = require("../modules/photos/photos.route");
+const stats_route_1 = require("../modules/stats/stats.route");
+const user_route_1 = require("../modules/users/user.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
-        path: '/auth',
-        route: user_route_1.default,
-    },
-    {
         path: '/users',
-        route: user_route_1.default,
+        route: user_route_1.userRoutes,
     },
     {
-        path: '/cows',
-        route: cow_route_1.default,
+        path: '/auth',
+        route: auth_route_1.LoginRoutes,
     },
     {
-        path: '/orders',
-        route: order_route_1.default,
+        path: '/category',
+        route: category_route_1.CategoryRoutes,
     },
     {
-        path: '/admin',
-        route: admin_route_1.default,
+        path: '/article',
+        route: article_route_1.ArticleRoutes,
     },
     {
-        path: '/admins',
-        route: auth_route_1.default,
+        path: '/photos',
+        route: photos_route_1.photoRoutes,
+    },
+    {
+        path: '/stats',
+        route: stats_route_1.StatsRoutes,
     },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

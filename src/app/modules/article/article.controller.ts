@@ -7,7 +7,6 @@ import { ArticleService } from './article.service'
 const createArticle = catchAsync(async (req: Request, res: Response) => {
   const article = req.body
   const file = req.file
-  console.log({ article, file })
   const result = await ArticleService.createArticle(article, file)
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

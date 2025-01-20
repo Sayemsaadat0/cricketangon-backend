@@ -1,68 +1,156 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_1 = __importDefault(require("http-status"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const jwtHelper_1 = require("../../../helper/jwtHelper");
-const user_model_1 = require("../user/user.model");
-const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phoneNumber, password } = payload;
-    const user = new user_model_1.User();
-    const isUserExist = yield user.isUserExist(phoneNumber);
-    // check user exist in the database s
-    if (!isUserExist) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User Does Not exist');
-    }
-    // check password
-    if (isUserExist.password &&
-        !user.isPasswordMatched(password, isUserExist.password)) {
-        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Password is incorrect');
-    }
-    // create a access and refresh token
-    const accessToken = jwtHelper_1.jwtHelpers.createToken({ phoneNumber: isUserExist.phoneNumber, role: isUserExist.role }, config_1.default.jwt_secret, config_1.default.jwt_expires_in);
-    const { needsPasswordChange } = isUserExist;
-    const refreshToken = jwtHelper_1.jwtHelpers.createToken({ phoneNumber: isUserExist.phoneNumber, role: isUserExist.role }, config_1.default.jwt_refresh_secret, config_1.default.jwt_refresh_expires_in);
-    return {
-        accessToken,
-        refreshToken,
-        needsPasswordChange: needsPasswordChange,
-    };
-});
-const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = new user_model_1.User();
-    let verifiedToken = null;
+const db_1 = __importDefault(require("../../../config/db"));
+const userQueries_1 = require("../../../queries/userQueries");
+const auth_constant_1 = require("./auth.constant");
+const auth_model_1 = require("./auth.model");
+const loginUser = async (payload) => {
+    const { email, password } = payload;
     try {
-        verifiedToken = jwtHelper_1.jwtHelpers.verifyToken(token, config_1.default.jwt_refresh_secret);
+        const user = await auth_model_1.AuthModel.getUserByEmail(email);
+        if (!user) {
+            throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User does not exist');
+        }
+        const isPasswordValid = await bcrypt_1.default.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Password did not match');
+        }
+        const accessToken = jwtHelper_1.jwtHelpers.createToken({
+            email: user.email,
+            role: user.role,
+            id: user.id,
+            image: user.image,
+            address: user.address
+        }, config_1.default.jwt_secret, config_1.default.jwt_expires_in);
+        const refreshToken = jwtHelper_1.jwtHelpers.createToken({
+            email: user.email,
+            role: user.role,
+            id: user.id,
+            image: user.image,
+            address: user.address
+        }, config_1.default.jwt_refresh_secret, config_1.default.jwt_refresh_expires_in);
+        return {
+            accessToken,
+            refreshToken,
+        };
     }
     catch (error) {
-        throw new ApiError_1.default(http_status_1.default.FORBIDDEN, 'invalid refresh token');
+        throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Login failed');
     }
-    // checking deleted users refresh token
-    const { phoneNumber } = verifiedToken;
-    const isUserExist = yield user.isUserExist(phoneNumber);
-    if (!isUserExist) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User does not exist');
+};
+const refreshAccessToken = async (refreshToken) => {
+    try {
+        const decoded = jsonwebtoken_1.default.verify(refreshToken, config_1.default.jwt_refresh_secret);
+        if (!decoded || typeof decoded !== 'object' || !decoded.email) {
+            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Invalid refresh token');
+        }
+        const { email, role, id } = decoded;
+        const newAccessToken = jwtHelper_1.jwtHelpers.createToken({ email, role, id }, config_1.default.jwt_secret, config_1.default.jwt_expires_in);
+        return {
+            accessToken: newAccessToken,
+        };
     }
-    // generate new token
-    const newAccessToken = jwtHelper_1.jwtHelpers.createToken({ phoneNumber: isUserExist.phoneNumber, role: isUserExist.role }, config_1.default.jwt_secret, config_1.default.jwt_expires_in);
-    return {
-        accessToken: newAccessToken,
-    };
-});
+    catch (error) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Failed to refresh token');
+    }
+};
+const sendVerificationCode = async (email) => {
+    return new Promise((resolve, reject) => {
+        db_1.default.query(userQueries_1.UserQueries.FIND_USER_BY_EMAIL, [email], async (err, results) => {
+            if (err)
+                return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving user', err.stack));
+            const rows = results;
+            const user = rows.length > 0 ? rows[0] : null;
+            if (!user) {
+                return reject(new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User not found'));
+            }
+            const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            db_1.default.query(`INSERT INTO password_resets (email, code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))`, [email, verificationCode], async (insertErr) => {
+                if (insertErr) {
+                    return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to save reset request'));
+                }
+                await (0, auth_constant_1.sendEmail)(email, 'Your Password Reset Code', `Your verification code is: ${verificationCode}`);
+                resolve({ message: 'Verification code sent successfully' });
+            });
+        });
+    });
+};
+const matchVerificationCode = async (email, code) => {
+    return new Promise((resolve, reject) => {
+        db_1.default.query(`SELECT * FROM password_resets WHERE email = ? AND code = ? AND expires_at > NOW()`, [email, code], async (err, results) => {
+            if (err) {
+                return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error verifying code', err.stack));
+            }
+            const rows = results;
+            if (rows.length === 0) {
+                return reject(new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid or expired code'));
+            }
+            resolve({ message: 'Verification code matched successfully' });
+        });
+    });
+};
+const resetPassword = async (email, newPassword) => {
+    const user = await auth_model_1.AuthModel.getUserByEmail(email);
+    if (!user) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User Not Found');
+    }
+    return new Promise((resolve, reject) => {
+        const hashedPassword = bcrypt_1.default.hashSync(newPassword, 12);
+        db_1.default.query(`UPDATE users SET password = ? WHERE email = ?`, [hashedPassword, email], async (err, results) => {
+            if (err) {
+                return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error resetting password', err.stack));
+            }
+            console.log(results);
+            db_1.default.query(`DELETE FROM password_resets WHERE email = ?`, [email], err => {
+                if (err) {
+                    return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error clearing reset codes', err.stack));
+                }
+                resolve({ message: 'Password reset successfully' });
+            });
+        });
+    });
+};
+const changePassword = async (userId, oldPassword, newPassword) => {
+    return new Promise((resolve, reject) => {
+        db_1.default.query(`SELECT password FROM users WHERE id = ?`, [userId], async (err, results) => {
+            if (err) {
+                return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving user password', err.stack));
+            }
+            const rows = results;
+            if (rows.length === 0) {
+                throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
+            }
+            const currentHashedPassword = rows[0].password;
+            const isMatch = bcrypt_1.default.compare(oldPassword, currentHashedPassword);
+            if (!isMatch) {
+                throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Old password is incorrect');
+            }
+            const hashedNewPassword = bcrypt_1.default.hashSync(newPassword, 12);
+            db_1.default.query(`UPDATE users SET password = ? WHERE id = ?`, [hashedNewPassword, userId], (updateErr, updateResults) => {
+                if (updateErr) {
+                    return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error updating password', updateErr.stack));
+                }
+                console.log(updateResults);
+                resolve({ message: 'Password changed successfully' });
+            });
+        });
+    });
+};
 exports.AuthService = {
     loginUser,
-    refreshToken,
+    refreshAccessToken,
+    sendVerificationCode,
+    matchVerificationCode,
+    resetPassword,
+    changePassword
 };
