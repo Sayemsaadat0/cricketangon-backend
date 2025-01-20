@@ -11,8 +11,11 @@ import { IUserFilter, UserSearchableFields } from './user.constant'
 import { IUser } from './user.interface'
 import { UserModel } from './user.model'
 
-const createUser = async (user: IUser): Promise<Partial<IUser>> => {
+const createUser = async (user: IUser,file?:Express.Multer.File): Promise<Partial<IUser>> => {
   try {
+    if(file){
+      user.image=`/uploads/${file.filename}`
+    }
     const emailCheckQuery = `SELECT * FROM users WHERE email = ?`
     const [existingUser] = await connection
       .promise()
@@ -72,8 +75,7 @@ const getAllUsers = async (
     const query = `SELECT id, name, email, role, image, address FROM users ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-    console.log('Executing Query:', query)
-    console.log('Query Parameters:', queryParams)
+
 
     const [results] = await connection.promise().query(query, queryParams)
     const users = results as RowDataPacket[]
@@ -133,9 +135,13 @@ const getUserById = async (id: number): Promise<Partial<IUser | null>> => {
 
 const updateUser = async (
   id: number,
-  userUpdates: Partial<IUser>
+  userUpdates: Partial<IUser>,
+  file?:Express.Multer.File
 ): Promise<IUser> => {
   try {
+    if(file){
+      userUpdates.image=`/uploads/${file.filename}`
+    }
     const fields = Object.keys(userUpdates)
       .filter(key => userUpdates[key as keyof IUser] !== undefined)
       .map(key => `${key} = ?`)

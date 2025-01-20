@@ -6,7 +6,8 @@ import { UserService } from './user.service';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = req.body;
-  const result = await UserService.createUser(user);
+  const file=req.file;
+  const result = await UserService.createUser(user,file);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: 'User created successfully',
@@ -41,7 +42,8 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const userId = Number(req.params.id);
   const userUpdates = req.body;
-  const user = await UserService.updateUser(userId, userUpdates);
+  const file=req.file;
+  const user = await UserService.updateUser(userId, userUpdates,file);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     message: 'User updated successfully',
