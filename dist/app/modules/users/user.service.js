@@ -12,8 +12,11 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helper/paginationHelper");
 const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
-const createUser = async (user) => {
+const createUser = async (user, file) => {
     try {
+        if (file) {
+            user.image = `/uploads/${file.filename}`;
+        }
         const emailCheckQuery = `SELECT * FROM users WHERE email = ?`;
         const [existingUser] = await db_1.connection
             .promise()
@@ -59,8 +62,6 @@ const getAllUsers = async (filters, paginationOptions) => {
         const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
         const query = `SELECT id, name, email, role, image, address FROM users ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`;
         queryParams.push(limit, skip);
-        console.log('Executing Query:', query);
-        console.log('Query Parameters:', queryParams);
         const [results] = await db_1.connection.promise().query(query, queryParams);
         const users = results;
         const mappedUsers = users.map(row => ({
@@ -107,8 +108,11 @@ const getUserById = async (id) => {
         throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving user');
     }
 };
-const updateUser = async (id, userUpdates) => {
+const updateUser = async (id, userUpdates, file) => {
     try {
+        if (file) {
+            userUpdates.image = `/uploads/${file.filename}`;
+        }
         const fields = Object.keys(userUpdates)
             .filter(key => userUpdates[key] !== undefined)
             .map(key => `${key} = ?`);

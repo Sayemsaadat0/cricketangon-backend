@@ -10,7 +10,8 @@ const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const user_service_1 = require("./user.service");
 const createUser = (0, catchAsync_1.default)(async (req, res) => {
     const user = req.body;
-    const result = await user_service_1.UserService.createUser(user);
+    const file = req.file;
+    const result = await user_service_1.UserService.createUser(user, file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,
         message: 'User created successfully',
@@ -42,7 +43,8 @@ const getUserById = (0, catchAsync_1.default)(async (req, res) => {
 const updateUser = (0, catchAsync_1.default)(async (req, res) => {
     const userId = Number(req.params.id);
     const userUpdates = req.body;
-    const user = await user_service_1.UserService.updateUser(userId, userUpdates);
+    const file = req.file;
+    const user = await user_service_1.UserService.updateUser(userId, userUpdates, file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         message: 'User updated successfully',

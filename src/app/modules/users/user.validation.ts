@@ -22,7 +22,7 @@ const createUserZodSchema = z.object({
 const updateUserZodSchema = z.object({
   body: z.object({
     name: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z.string().optional(),
     password: z.string().optional(),
     role: z.enum(['user', 'admin', 'super admin']).optional(),
     image: z.string().optional(),
