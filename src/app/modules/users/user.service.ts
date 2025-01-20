@@ -2,7 +2,7 @@
 import bcrypt from 'bcrypt'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import connection from '../../../config/db'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
 import { IGenericResponse } from '../../../interfaces/common'
@@ -34,7 +34,6 @@ const createUser = async (user: IUser): Promise<Partial<IUser>> => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error creating user')
   }
 }
-
 
 const getAllUsers = async (
   filters: IUserFilter,
@@ -137,27 +136,56 @@ const updateUser = async (
   userUpdates: Partial<IUser>
 ): Promise<IUser> => {
   try {
-    const user = await UserModel.updateUser(id, userUpdates)
-    if (!user) {
+    const fields = Object.keys(userUpdates)
+      .filter(key => userUpdates[key as keyof IUser] !== undefined)
+      .map(key => `${key} = ?`)
+
+    const values = Object.values(userUpdates).filter(
+      value => value !== undefined
+    )
+    values.push(id)
+
+    if (fields.length === 0) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'No updates provided')
+    }
+
+    const query = `UPDATE users SET ${fields.join(
+      ', '
+    )}, updated_at = NOW() WHERE id = ?`
+
+    const [updateResult] = await connection.promise().query(query, values)
+    const { affectedRows } = updateResult as { affectedRows: number }
+
+    if (affectedRows === 0) {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
     }
-    await UserModel.updateUser(id, userUpdates)
-    const updatedUser = await UserModel.getUserById(id)
-    if (!updatedUser) {
+
+    const [rows] = await connection.promise().query<RowDataPacket[]>(
+      `SELECT id, name, email, role, image, address, updated_at 
+      FROM users 
+      WHERE id = ?`,
+      [id]
+    )
+
+    if (rows.length === 0) {
       throw new ApiError(
         httpStatus.INTERNAL_SERVER_ERROR,
         'Error fetching updated user'
       )
     }
 
+    const updatedUser = rows[0]
     const { password, ...responseUser } = updatedUser
     console.log(password)
     return responseUser as IUser
   } catch (error) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error updating user')
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error updating user',
+      error instanceof Error ? error.stack : ''
+    )
   }
 }
-
 const deleteUser = async (id: number): Promise<IUser> => {
   try {
     const user = await UserModel.deleteUser(id)

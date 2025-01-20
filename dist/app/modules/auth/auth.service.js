@@ -10,7 +10,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const jwtHelper_1 = require("../../../helper/jwtHelper");
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const userQueries_1 = require("../../../queries/userQueries");
 const auth_constant_1 = require("./auth.constant");
 const auth_model_1 = require("./auth.model");
@@ -66,7 +66,7 @@ const refreshAccessToken = async (refreshToken) => {
 };
 const sendVerificationCode = async (email) => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(userQueries_1.UserQueries.FIND_USER_BY_EMAIL, [email], async (err, results) => {
+        db_1.connection.query(userQueries_1.UserQueries.FIND_USER_BY_EMAIL, [email], async (err, results) => {
             if (err)
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving user', err.stack));
             const rows = results;
@@ -75,7 +75,7 @@ const sendVerificationCode = async (email) => {
                 return reject(new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User not found'));
             }
             const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            db_1.default.query(`INSERT INTO password_resets (email, code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))`, [email, verificationCode], async (insertErr) => {
+            db_1.connection.query(`INSERT INTO password_resets (email, code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))`, [email, verificationCode], async (insertErr) => {
                 if (insertErr) {
                     return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to save reset request'));
                 }
@@ -87,7 +87,7 @@ const sendVerificationCode = async (email) => {
 };
 const matchVerificationCode = async (email, code) => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(`SELECT * FROM password_resets WHERE email = ? AND code = ? AND expires_at > NOW()`, [email, code], async (err, results) => {
+        db_1.connection.query(`SELECT * FROM password_resets WHERE email = ? AND code = ? AND expires_at > NOW()`, [email, code], async (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error verifying code', err.stack));
             }
@@ -106,12 +106,12 @@ const resetPassword = async (email, newPassword) => {
     }
     return new Promise((resolve, reject) => {
         const hashedPassword = bcrypt_1.default.hashSync(newPassword, 12);
-        db_1.default.query(`UPDATE users SET password = ? WHERE email = ?`, [hashedPassword, email], async (err, results) => {
+        db_1.connection.query(`UPDATE users SET password = ? WHERE email = ?`, [hashedPassword, email], async (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error resetting password', err.stack));
             }
             console.log(results);
-            db_1.default.query(`DELETE FROM password_resets WHERE email = ?`, [email], err => {
+            db_1.connection.query(`DELETE FROM password_resets WHERE email = ?`, [email], err => {
                 if (err) {
                     return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error clearing reset codes', err.stack));
                 }
@@ -122,7 +122,7 @@ const resetPassword = async (email, newPassword) => {
 };
 const changePassword = async (userId, oldPassword, newPassword) => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(`SELECT password FROM users WHERE id = ?`, [userId], async (err, results) => {
+        db_1.connection.query(`SELECT password FROM users WHERE id = ?`, [userId], async (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving user password', err.stack));
             }
@@ -136,7 +136,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
                 throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Old password is incorrect');
             }
             const hashedNewPassword = bcrypt_1.default.hashSync(newPassword, 12);
-            db_1.default.query(`UPDATE users SET password = ? WHERE id = ?`, [hashedNewPassword, userId], (updateErr, updateResults) => {
+            db_1.connection.query(`UPDATE users SET password = ? WHERE id = ?`, [hashedNewPassword, userId], (updateErr, updateResults) => {
                 if (updateErr) {
                     return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error updating password', updateErr.stack));
                 }

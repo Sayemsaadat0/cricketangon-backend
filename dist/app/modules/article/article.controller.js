@@ -11,7 +11,6 @@ const article_service_1 = require("./article.service");
 const createArticle = (0, catchAsync_1.default)(async (req, res) => {
     const article = req.body;
     const file = req.file;
-    console.log({ article, file });
     const result = await article_service_1.ArticleService.createArticle(article, file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,

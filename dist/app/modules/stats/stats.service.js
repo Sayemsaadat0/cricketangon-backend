@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatsService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helper/paginationHelper");
 const stats_model_1 = require("./stats.model");
@@ -47,7 +47,7 @@ const getAllStats = async (filters, paginationOptions) => {
         const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
         const query = `SELECT id, title,image, created_at, updated_at, authorName, description FROM stats ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`;
         queryParams.push(limit, skip);
-        const [results] = await db_1.default.promise().query(query, queryParams);
+        const [results] = await db_1.connection.promise().query(query, queryParams);
         const stats = results;
         const mappedStats = stats.map(row => ({
             id: row.id,
@@ -60,7 +60,7 @@ const getAllStats = async (filters, paginationOptions) => {
         }));
         const countQuery = `SELECT COUNT(*) AS total FROM stats ${whereClause}`;
         const countParams = queryParams.slice(0, -2);
-        const [countResults] = await db_1.default
+        const [countResults] = await db_1.connection
             .promise()
             .query(countQuery, countParams);
         const total = countResults[0].total;

@@ -1,6 +1,6 @@
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import connection from '../../../config/db'
+import {connection} from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
 import { IGenericResponse } from '../../../interfaces/common'

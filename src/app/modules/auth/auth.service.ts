@@ -6,7 +6,7 @@ import ApiError from '../../../errors/ApiError'
 import { jwtHelpers } from '../../../helper/jwtHelper'
 
 import { RowDataPacket } from 'mysql2'
-import connection from '../../../config/db'
+import {connection} from '../../../config/db'
 import { UserQueries } from '../../../queries/userQueries'
 import { IUser } from '../users/user.interface'
 import { sendEmail } from './auth.constant'

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PhotoService = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const http_status_1 = __importDefault(require("http-status"));
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helper/paginationHelper");
 const photos_constant_1 = require("./photos.constant");
@@ -49,7 +49,7 @@ const getAllPhotos = async (filters, paginationOptions) => {
         queryParams.push(limit, skip);
         console.log('Executing Query:', query);
         console.log('Query Parameters:', queryParams);
-        const [results] = await db_1.default.promise().query(query, queryParams);
+        const [results] = await db_1.connection.promise().query(query, queryParams);
         const photos = results;
         const mappedPhotos = photos.map(row => ({
             id: row.id,
@@ -58,7 +58,7 @@ const getAllPhotos = async (filters, paginationOptions) => {
         }));
         const countQuery = `SELECT COUNT(*) AS total FROM photos ${whereClause}`;
         const countParams = queryParams.slice(0, -2);
-        const [countResults] = await db_1.default
+        const [countResults] = await db_1.connection
             .promise()
             .query(countQuery, countParams);
         const total = countResults[0].total;

@@ -1,6 +1,6 @@
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import connection from '../../../config/db'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
 import { IGenericResponse } from '../../../interfaces/common'
@@ -152,33 +152,58 @@ const getArticleById = async (
 const updateArticle = async (
   id: number,
   articleUpdates: Partial<IArticle>,
-  file?: Express.Multer.File
+  file?:Express.Multer.File
 ): Promise<IArticle> => {
   try {
-    if (file) {
-      articleUpdates.image = `/uploads/${file.filename}`
+    if(file){
+      articleUpdates.image=`uploads/${file.filename}`
     }
-    const article = await ArticleModel.updateArticle(id, articleUpdates)
-    if (!article) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Article not found')
+   
+    const fields = Object.keys(articleUpdates)
+      .filter((key) => articleUpdates[key as keyof IArticle] !== undefined)
+      .map((key) => `${key} = ?`);
+
+    const values = Object.values(articleUpdates).filter((value) => value !== undefined);
+    values.push(id); 
+
+    if (fields.length === 0) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'No updates provided');
     }
 
-    const updatedArticle = await ArticleModel.getArticleById(id)
-    if (!updatedArticle) {
+    const query = `UPDATE articles SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`;
+
+    const [updateResult] = await connection.promise().query(query, values);
+    const { affectedRows } = updateResult as { affectedRows: number };
+
+    if (affectedRows === 0) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Article not found');
+    }
+
+    // Fetch the updated article
+    const [rows] = await connection.promise().query<RowDataPacket[]>(
+      `SELECT id, authorName, title, categoryId, image, description, userId, updated_at
+      FROM articles
+      WHERE id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
       throw new ApiError(
         httpStatus.INTERNAL_SERVER_ERROR,
         'Error fetching updated article'
-      )
+      );
     }
 
-    return updatedArticle
+    const updatedArticle = rows[0];
+    return updatedArticle as IArticle;
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      'Error updating article'
-    )
+      'Error updating article',
+      error instanceof Error ? error.stack : ''
+    );
   }
-}
+};
 
 const deleteArticle = async (id: number): Promise<IArticle> => {
   try {

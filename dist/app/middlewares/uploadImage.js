@@ -10,7 +10,7 @@ const path_1 = __importDefault(require("path"));
 const ApiError_1 = __importDefault(require("../../errors/ApiError"));
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/uploads/');
+        cb(null, 'dist/uploads/');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;

@@ -1,5 +1,5 @@
 import httpStatus from "http-status"
-import connection from "../../../config/db"
+import {connection} from "../../../config/db"
 import ApiError from "../../../errors/ApiError"
 import { UserQueries } from "../../../queries/userQueries"
 import { IUser } from "../users/user.interface"

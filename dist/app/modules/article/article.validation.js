@@ -22,7 +22,7 @@ const updateArticle = zod_1.z.object({
         title: zod_1.z.string().min(1, 'Title is required').optional(),
         description: zod_1.z.string().min(1, 'Description is required').optional(),
         categoryId: zod_1.z.number().int().min(1, 'Category ID is required').optional(),
-        authorName: zod_1.z.number().min(1, 'Author Name is required').optional(),
+        authorName: zod_1.z.string().min(1, 'Author Name is required').optional(),
         userId: zod_1.z.number().int().min(1, 'User ID is required').optional(),
     }),
 });

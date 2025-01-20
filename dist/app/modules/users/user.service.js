@@ -7,7 +7,7 @@ exports.UserService = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_1 = __importDefault(require("http-status"));
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helper/paginationHelper");
 const user_constant_1 = require("./user.constant");
@@ -15,7 +15,7 @@ const user_model_1 = require("./user.model");
 const createUser = async (user) => {
     try {
         const emailCheckQuery = `SELECT * FROM users WHERE email = ?`;
-        const [existingUser] = await db_1.default
+        const [existingUser] = await db_1.connection
             .promise()
             .query(emailCheckQuery, [user.email]);
         if (existingUser.length > 0) {
@@ -61,7 +61,7 @@ const getAllUsers = async (filters, paginationOptions) => {
         queryParams.push(limit, skip);
         console.log('Executing Query:', query);
         console.log('Query Parameters:', queryParams);
-        const [results] = await db_1.default.promise().query(query, queryParams);
+        const [results] = await db_1.connection.promise().query(query, queryParams);
         const users = results;
         const mappedUsers = users.map(row => ({
             id: row.id,
@@ -75,7 +75,7 @@ const getAllUsers = async (filters, paginationOptions) => {
         const countQuery = `SELECT COUNT(*) AS total FROM users ${whereClause}`;
         const countParams = queryParams.slice(0, -2);
         console.log('Count Query:', countQuery);
-        const [countResults] = await db_1.default
+        const [countResults] = await db_1.connection
             .promise()
             .query(countQuery, countParams);
         const total = countResults[0].total;
@@ -109,21 +109,33 @@ const getUserById = async (id) => {
 };
 const updateUser = async (id, userUpdates) => {
     try {
-        const user = await user_model_1.UserModel.updateUser(id, userUpdates);
-        if (!user) {
+        const fields = Object.keys(userUpdates)
+            .filter(key => userUpdates[key] !== undefined)
+            .map(key => `${key} = ?`);
+        const values = Object.values(userUpdates).filter(value => value !== undefined);
+        values.push(id);
+        if (fields.length === 0) {
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'No updates provided');
+        }
+        const query = `UPDATE users SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`;
+        const [updateResult] = await db_1.connection.promise().query(query, values);
+        const { affectedRows } = updateResult;
+        if (affectedRows === 0) {
             throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
         }
-        await user_model_1.UserModel.updateUser(id, userUpdates);
-        const updatedUser = await user_model_1.UserModel.getUserById(id);
-        if (!updatedUser) {
+        const [rows] = await db_1.connection.promise().query(`SELECT id, name, email, role, image, address, updated_at 
+      FROM users 
+      WHERE id = ?`, [id]);
+        if (rows.length === 0) {
             throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error fetching updated user');
         }
+        const updatedUser = rows[0];
         const { password, ...responseUser } = updatedUser;
         console.log(password);
         return responseUser;
     }
     catch (error) {
-        throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error updating user');
+        throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error updating user', error instanceof Error ? error.stack : '');
     }
 };
 const deleteUser = async (id) => {

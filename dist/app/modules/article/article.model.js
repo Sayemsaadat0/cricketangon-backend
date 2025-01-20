@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArticleModel = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const articleQueries_1 = require("../../../queries/articleQueries");
 const createArticle = (article) => {
     console.log('log article', article);
     const { authorName, title, categoryId, image, isApproved, description, userId, } = article;
     return new Promise((resolve, reject) => {
-        db_1.default.query(articleQueries_1.ArticleQueries.CREATE_ARTICLE, [authorName, title, categoryId, image, description, userId, isApproved], (err, results) => {
+        db_1.connection.query(articleQueries_1.ArticleQueries.CREATE_ARTICLE, [authorName, title, categoryId, image, description, userId, isApproved], (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error creating article', err.stack));
             }
@@ -31,7 +31,7 @@ const createArticle = (article) => {
 };
 const getAllArticles = () => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(articleQueries_1.ArticleQueries.GET_ALL_ARTICLES, (err, results) => {
+        db_1.connection.query(articleQueries_1.ArticleQueries.GET_ALL_ARTICLES, (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving articles', err.stack));
             }
@@ -60,7 +60,7 @@ const getAllArticles = () => {
 };
 const getArticleById = (id) => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(articleQueries_1.ArticleQueries.GET_ARTICLE_BY_ID, [id], (err, results) => {
+        db_1.connection.query(articleQueries_1.ArticleQueries.GET_ARTICLE_BY_ID, [id], (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving article', err.stack));
             }
@@ -76,7 +76,7 @@ const getArticleById = (id) => {
 const updateArticle = (id, articleUpdates) => {
     const { authorName, title, categoryId, image, description, userId } = articleUpdates;
     return new Promise((resolve, reject) => {
-        db_1.default.query(articleQueries_1.ArticleQueries.UPDATE_ARTICLE, [authorName, title, categoryId, image, description, userId, id], (err, results) => {
+        db_1.connection.query(articleQueries_1.ArticleQueries.UPDATE_ARTICLE, [authorName, title, categoryId, image, description, userId, id], (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error updating article', err.stack));
             }
@@ -97,7 +97,7 @@ const updateArticle = (id, articleUpdates) => {
 };
 const deleteArticle = (id) => {
     return new Promise((resolve, reject) => {
-        db_1.default.query(articleQueries_1.ArticleQueries.GET_ARTICLE_BY_ID, [id], (err, results) => {
+        db_1.connection.query(articleQueries_1.ArticleQueries.GET_ARTICLE_BY_ID, [id], (err, results) => {
             if (err) {
                 return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error retrieving article before deletion', err.stack));
             }
@@ -106,7 +106,7 @@ const deleteArticle = (id) => {
             if (!article) {
                 return reject(new ApiError_1.default(http_status_1.default.NOT_FOUND, 'Article not found'));
             }
-            db_1.default.query(articleQueries_1.ArticleQueries.DELETE_ARTICLE, [id], deleteErr => {
+            db_1.connection.query(articleQueries_1.ArticleQueries.DELETE_ARTICLE, [id], deleteErr => {
                 if (deleteErr) {
                     return reject(new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Error deleting article', deleteErr.stack));
                 }

@@ -1,6 +1,6 @@
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import connection from '../../../config/db'
+import {connection} from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { CategoryQueries } from '../../../queries/categoryQueries'
 import { ICategory } from './category.interface'

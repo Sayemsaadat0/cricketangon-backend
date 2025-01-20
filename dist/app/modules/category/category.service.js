@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const db_1 = __importDefault(require("../../../config/db"));
+const db_1 = require("../../../config/db");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helper/paginationHelper");
 const category_model_1 = require("./category.model");
 const createCategory = async (category, file) => {
     try {
         const nameCheckQuery = `SELECT * FROM categories WHERE name = ?`;
-        const [existingCategory] = await db_1.default
+        const [existingCategory] = await db_1.connection
             .promise()
             .query(nameCheckQuery, [category.name]);
         if (existingCategory.length > 0) {
@@ -57,7 +57,7 @@ const getAllCategories = async (filters, paginationOptions) => {
         queryParams.push(limit, skip);
         console.log('Executing Query:', query);
         console.log('Query Parameters:', queryParams);
-        const [results] = await db_1.default.promise().query(query, queryParams);
+        const [results] = await db_1.connection.promise().query(query, queryParams);
         const categories = results;
         const mappedCategories = categories.map(row => ({
             id: row.id,
@@ -67,7 +67,7 @@ const getAllCategories = async (filters, paginationOptions) => {
         const countQuery = `SELECT COUNT(*) AS total FROM categories ${whereClause}`;
         const countParams = queryParams.slice(0, -2);
         console.log('Count Query:', countQuery);
-        const [countResults] = await db_1.default.promise().query(countQuery, countParams);
+        const [countResults] = await db_1.connection.promise().query(countQuery, countParams);
         const total = countResults[0].total;
         return {
             meta: {
