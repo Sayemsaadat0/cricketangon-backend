@@ -1,6 +1,6 @@
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import {connection} from '../../../config/db'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { UserQueries } from '../../../queries/userQueries'
 import { IUser } from './user.interface'
@@ -99,7 +99,7 @@ const updateUser = (
             )
           )
         const { affectedRows } = results as RowDataPacket
-        console.log(affectedRows)
+        // console.log(affectedRows)
         if (affectedRows === 0) {
           return reject(new ApiError(httpStatus.NOT_FOUND, 'User not found'))
         }

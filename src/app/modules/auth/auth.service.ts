@@ -6,7 +6,7 @@ import ApiError from '../../../errors/ApiError'
 import { jwtHelpers } from '../../../helper/jwtHelper'
 
 import { RowDataPacket } from 'mysql2'
-import {connection} from '../../../config/db'
+import { connection } from '../../../config/db'
 import { UserQueries } from '../../../queries/userQueries'
 import { IUser } from '../users/user.interface'
 import { sendEmail } from './auth.constant'
@@ -40,8 +40,8 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
         email: user.email,
         role: user.role,
         id: user.id,
-        image:user.image,
-        address:user.address
+        image: user.image,
+        address: user.address,
       },
       config.jwt_secret as string,
       config.jwt_expires_in as string
@@ -52,8 +52,8 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
         email: user.email,
         role: user.role,
         id: user.id,
-        image:user.image,
-        address:user.address
+        image: user.image,
+        address: user.address,
       },
       config.jwt_refresh_secret as string,
       config.jwt_refresh_expires_in as string
@@ -199,7 +199,7 @@ const resetPassword = async (
             )
           )
         }
-        console.log(results)
+        console.log('Article service', { results })
         connection.query(
           `DELETE FROM password_resets WHERE email = ?`,
           [email],
@@ -267,7 +267,7 @@ const changePassword = async (
                 )
               )
             }
-            console.log(updateResults)
+            console.log('Article service', { updateResults })
             resolve({ message: 'Password changed successfully' })
           }
         )
@@ -282,5 +282,5 @@ export const AuthService = {
   sendVerificationCode,
   matchVerificationCode,
   resetPassword,
-  changePassword
+  changePassword,
 }
