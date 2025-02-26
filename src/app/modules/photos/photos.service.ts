@@ -60,7 +60,7 @@ const getAllPhotos = async (
 
     const whereClause =
       whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
-    const query = `SELECT id, image, category FROM photos ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
+    const query = `SELECT id, image, category, created_at FROM photos ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
     // console.log('Executing Query:', query)
@@ -73,6 +73,7 @@ const getAllPhotos = async (
       id: row.id,
       image: row.image,
       category: row.category,
+      created_at: row.created_at,
     }))
 
     const countQuery = `SELECT COUNT(*) AS total FROM photos ${whereClause}`
