@@ -16,9 +16,6 @@ const getArticleById = z.object({
 })
 
 const updateArticle = z.object({
-  params: z.object({
-    id: z.string({ required_error: 'Article ID is required' }),
-  }),
   body: z.object({
     title: z.string().min(1, 'Title is required').optional(),
     description: z.string().min(1, 'Description is required').optional(),
