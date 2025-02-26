@@ -158,7 +158,7 @@ const updateArticle = async (
 ): Promise<IArticle> => {
   try {
     if (file) {
-      articleUpdates.image = `uploads/${file.filename}`
+      articleUpdates.image = `/uploads/${file.filename}`
     }
 
     const fields = Object.keys(articleUpdates)
