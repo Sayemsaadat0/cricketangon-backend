@@ -34,7 +34,7 @@ const createArticle = async (
     } else {
       article.isApproved = true
     }
-    console.log(existingUser)
+    // console.log(existingUser)
 
     if (file) {
       article.image = `/uploads/${file.filename}`
@@ -87,11 +87,11 @@ const getAllArticles = async (
 
     const whereClause =
       whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
-    const query = `SELECT id, title, authorName, image, description, categoryId, userId FROM articles ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
+    const query = `SELECT id, title, authorName, image,isApproved, description, categoryId, userId, created_at FROM articles ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-    console.log('Executing Query:', query)
-    console.log('Query Parameters:', queryParams)
+    // console.log('Executing Query:', query)
+    // console.log('Query Parameters:', queryParams)
 
     const [results] = await connection.promise().query(query, queryParams)
     const articles = results as RowDataPacket[]
@@ -101,9 +101,11 @@ const getAllArticles = async (
       title: row.title,
       authorName: row.authorName,
       image: row.image,
+      isApproved: row.isApproved,
       description: row.description,
       categoryId: row.categoryId,
       userId: row.userId,
+      created_at: row.created_at,
     }))
 
     const countQuery = `SELECT COUNT(*) AS total FROM articles ${whereClause}`
@@ -152,31 +154,35 @@ const getArticleById = async (
 const updateArticle = async (
   id: number,
   articleUpdates: Partial<IArticle>,
-  file?:Express.Multer.File
+  file?: Express.Multer.File
 ): Promise<IArticle> => {
   try {
-    if(file){
-      articleUpdates.image=`uploads/${file.filename}`
+    if (file) {
+      articleUpdates.image = `/uploads/${file.filename}`
     }
-   
-    const fields = Object.keys(articleUpdates)
-      .filter((key) => articleUpdates[key as keyof IArticle] !== undefined)
-      .map((key) => `${key} = ?`);
 
-    const values = Object.values(articleUpdates).filter((value) => value !== undefined);
-    values.push(id); 
+    const fields = Object.keys(articleUpdates)
+      .filter(key => articleUpdates[key as keyof IArticle] !== undefined)
+      .map(key => `${key} = ?`)
+
+    const values = Object.values(articleUpdates).filter(
+      value => value !== undefined
+    )
+    values.push(id)
 
     if (fields.length === 0) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'No updates provided');
+      throw new ApiError(httpStatus.BAD_REQUEST, 'No updates provided')
     }
 
-    const query = `UPDATE articles SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`;
+    const query = `UPDATE articles SET ${fields.join(
+      ', '
+    )}, updated_at = NOW() WHERE id = ?`
 
-    const [updateResult] = await connection.promise().query(query, values);
-    const { affectedRows } = updateResult as { affectedRows: number };
+    const [updateResult] = await connection.promise().query(query, values)
+    const { affectedRows } = updateResult as { affectedRows: number }
 
     if (affectedRows === 0) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Article not found');
+      throw new ApiError(httpStatus.NOT_FOUND, 'Article not found')
     }
 
     // Fetch the updated article
@@ -185,25 +191,25 @@ const updateArticle = async (
       FROM articles
       WHERE id = ?`,
       [id]
-    );
+    )
 
     if (rows.length === 0) {
       throw new ApiError(
         httpStatus.INTERNAL_SERVER_ERROR,
         'Error fetching updated article'
-      );
+      )
     }
 
-    const updatedArticle = rows[0];
-    return updatedArticle as IArticle;
+    const updatedArticle = rows[0]
+    return updatedArticle as IArticle
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'Error updating article',
       error instanceof Error ? error.stack : ''
-    );
+    )
   }
-};
+}
 
 const deleteArticle = async (id: number): Promise<IArticle> => {
   try {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import {connection} from '../../../config/db'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
 import { IGenericResponse } from '../../../interfaces/common'
@@ -63,8 +63,8 @@ const getAllPhotos = async (
     const query = `SELECT id, image, category FROM photos ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-    console.log('Executing Query:', query)
-    console.log('Query Parameters:', queryParams)
+    // console.log('Executing Query:', query)
+    // console.log('Query Parameters:', queryParams)
 
     const [results] = await connection.promise().query(query, queryParams)
     const photos = results as RowDataPacket[]

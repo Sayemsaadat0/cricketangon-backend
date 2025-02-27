@@ -11,10 +11,13 @@ import { IUserFilter, UserSearchableFields } from './user.constant'
 import { IUser } from './user.interface'
 import { UserModel } from './user.model'
 
-const createUser = async (user: IUser,file?:Express.Multer.File): Promise<Partial<IUser>> => {
+const createUser = async (
+  user: IUser,
+  file?: Express.Multer.File
+): Promise<Partial<IUser>> => {
   try {
-    if(file){
-      user.image=`/uploads/${file.filename}`
+    if (file) {
+      user.image = `/uploads/${file.filename}`
     }
     const emailCheckQuery = `SELECT * FROM users WHERE email = ?`
     const [existingUser] = await connection
@@ -75,8 +78,6 @@ const getAllUsers = async (
     const query = `SELECT id, name, email, role, image, address FROM users ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-
-
     const [results] = await connection.promise().query(query, queryParams)
     const users = results as RowDataPacket[]
 
@@ -92,7 +93,7 @@ const getAllUsers = async (
 
     const countQuery = `SELECT COUNT(*) AS total FROM users ${whereClause}`
     const countParams = queryParams.slice(0, -2)
-    console.log('Count Query:', countQuery)
+    // console.log('Count Query:', countQuery)
 
     const [countResults] = await connection
       .promise()
@@ -123,7 +124,7 @@ const getUserById = async (id: number): Promise<Partial<IUser | null>> => {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
     }
     const { password, ...userWithoutPassword } = user
-    console.log(password)
+    console.log('user service', { password })
     return userWithoutPassword
   } catch (error) {
     throw new ApiError(
@@ -136,11 +137,11 @@ const getUserById = async (id: number): Promise<Partial<IUser | null>> => {
 const updateUser = async (
   id: number,
   userUpdates: Partial<IUser>,
-  file?:Express.Multer.File
+  file?: Express.Multer.File
 ): Promise<IUser> => {
   try {
-    if(file){
-      userUpdates.image=`/uploads/${file.filename}`
+    if (file) {
+      userUpdates.image = `/uploads/${file.filename}`
     }
     const fields = Object.keys(userUpdates)
       .filter(key => userUpdates[key as keyof IUser] !== undefined)
@@ -167,8 +168,8 @@ const updateUser = async (
     }
 
     const [rows] = await connection.promise().query<RowDataPacket[]>(
-      `SELECT id, name, email, role, image, address, updated_at 
-      FROM users 
+      `SELECT id, name, email, role, image, address, updated_at
+      FROM users
       WHERE id = ?`,
       [id]
     )
@@ -182,7 +183,7 @@ const updateUser = async (
 
     const updatedUser = rows[0]
     const { password, ...responseUser } = updatedUser
-    console.log(password)
+    console.log('User service', { password })
     return responseUser as IUser
   } catch (error) {
     throw new ApiError(

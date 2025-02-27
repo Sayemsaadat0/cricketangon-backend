@@ -16,15 +16,12 @@ const getArticleById = z.object({
 })
 
 const updateArticle = z.object({
-  params: z.object({
-    id: z.string({ required_error: 'Article ID is required' }),
-  }),
   body: z.object({
     title: z.string().min(1, 'Title is required').optional(),
     description: z.string().min(1, 'Description is required').optional(),
-    categoryId: z.number().int().min(1, 'Category ID is required').optional(),
+    categoryId: z.string().min(1, 'Category ID is required').optional(),
     authorName: z.string().min(1, 'Author Name is required').optional(),
-    userId: z.number().int().min(1, 'User ID is required').optional(),
+    userId: z.string().min(1, 'User ID is required').optional(),
   }),
 })
 

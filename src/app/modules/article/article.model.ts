@@ -1,12 +1,11 @@
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import {connection} from '../../../config/db'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { ArticleQueries } from '../../../queries/articleQueries'
 import { IArticle } from './article.interface'
 
 const createArticle = (article: IArticle): Promise<Partial<IArticle>> => {
-  console.log('log article', article)
   const {
     authorName,
     title,
@@ -30,7 +29,7 @@ const createArticle = (article: IArticle): Promise<Partial<IArticle>> => {
             )
           )
         }
-        console.log(results)
+        console.log('Article model', { results })
         const newArticle = {
           authorName,
           title,
