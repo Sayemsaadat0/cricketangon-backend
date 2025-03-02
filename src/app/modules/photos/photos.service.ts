@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import fs from 'fs'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
+import path from 'path'
 import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
@@ -145,6 +147,13 @@ const updatePhoto = async (
 const deletePhoto = async (id: number): Promise<IPhotos> => {
   try {
     const photo = await PhotoModel.deletePhoto(id)
+    if (photo.image) {
+      const imagePath = path.join(__dirname, '../../../', photo.image)
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath)
+      }
+    }
     if (!photo) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Photo not found')
     }

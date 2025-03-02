@@ -1,5 +1,7 @@
+import fs from 'fs'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
+import path from 'path'
 import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
@@ -214,6 +216,13 @@ const updateArticle = async (
 const deleteArticle = async (id: number): Promise<IArticle> => {
   try {
     const article = await ArticleModel.deleteArticle(id)
+    if (article.image) {
+      const imagePath = path.join(__dirname, '../../../', article.image)
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath)
+      }
+    }
     if (!article) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Article not found')
     }

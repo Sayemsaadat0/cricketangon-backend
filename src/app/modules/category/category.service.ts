@@ -1,5 +1,7 @@
+import fs from 'fs'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
+import path from 'path'
 import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
@@ -166,6 +168,13 @@ const updateCategory = async (
 const deleteCategory = async (id: number): Promise<ICategory> => {
   try {
     const category = await CategoryModel.deleteCategory(id)
+    if (category.image) {
+      const imagePath = path.join(__dirname, '../../../', category.image)
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath)
+      }
+    }
     if (!category) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Category not found')
     }

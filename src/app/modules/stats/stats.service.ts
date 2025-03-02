@@ -1,27 +1,32 @@
+import fs from 'fs'
 import httpStatus from 'http-status'
 import { RowDataPacket } from 'mysql2'
-import {connection} from '../../../config/db'
+import path from 'path'
+import { connection } from '../../../config/db'
 import ApiError from '../../../errors/ApiError'
 import { paginationHelpers } from '../../../helper/paginationHelper'
 import { IGenericResponse } from '../../../interfaces/common'
 import { IPaginationOptions } from '../../../interfaces/pagination'
+import { IStatsFilter } from './stats.constant'
 import { IStats } from './stats.interface'
 import { StatsModel } from './stats.model'
-import { IStatsFilter } from './stats.constant'
 
-const createStats = async (stats: IStats, file?: Express.Multer.File): Promise<Partial<IStats>> => {
-    try {
-      if (file) {
-        stats.image = `/uploads/${file.filename}`; 
-      }
-  
-      const newStats = await StatsModel.createStat(stats);
-      return newStats;
-    } catch (error) {
-      console.error('Error creating stats:', error);
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error creating stats');
+const createStats = async (
+  stats: IStats,
+  file?: Express.Multer.File
+): Promise<Partial<IStats>> => {
+  try {
+    if (file) {
+      stats.image = `/uploads/${file.filename}`
     }
-  };
+
+    const newStats = await StatsModel.createStat(stats)
+    return newStats
+  } catch (error) {
+    console.error('Error creating stats:', error)
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error creating stats')
+  }
+}
 
 const getAllStats = async (
   filters: IStatsFilter,
@@ -36,7 +41,12 @@ const getAllStats = async (
     const queryParams: any[] = []
 
     if (searchTerm) {
-      const searchConditions = ['title', 'description', 'authorName', "description"]
+      const searchConditions = [
+        'title',
+        'description',
+        'authorName',
+        'description',
+      ]
         .map(field => `${field} LIKE ?`)
         .join(' OR ')
       whereConditions.push(`(${searchConditions})`)
@@ -60,8 +70,6 @@ const getAllStats = async (
     const query = `SELECT id, title,image, created_at, updated_at, authorName, description FROM stats ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-
-
     const [results] = await connection.promise().query(query, queryParams)
     const stats = results as RowDataPacket[]
 
@@ -71,8 +79,8 @@ const getAllStats = async (
       title: row.title,
       image: row.image,
       description: row.description,
-      created_at : row.created_at ,
-      updated_at : row.updated_at
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     }))
 
     const countQuery = `SELECT COUNT(*) AS total FROM stats ${whereClause}`
@@ -115,35 +123,46 @@ const getStatsById = async (id: number): Promise<Partial<IStats | null>> => {
 }
 
 const updateStats = async (
-    id: number,
-    statsUpdates: Partial<IStats>,
-    file?: Express.Multer.File
-  ): Promise<IStats> => {
-    try {
-      if (file) {
-        statsUpdates.image = `/uploads/${file.filename}`;
-      }
-  
-      const stats = await StatsModel.updateStat(id, statsUpdates); 
-      if (!stats) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Stats not found');
-      }
-  
-      const updatedStats = await StatsModel.getStatById(id);
-      if (!updatedStats) {
-        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error fetching updated stats');
-      }
-  
-      return updatedStats;
-    } catch (error) {
-      console.error('Error updating stats:', error);
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error updating stats');
+  id: number,
+  statsUpdates: Partial<IStats>,
+  file?: Express.Multer.File
+): Promise<IStats> => {
+  try {
+    if (file) {
+      statsUpdates.image = `/uploads/${file.filename}`
     }
-  };
+
+    const stats = await StatsModel.updateStat(id, statsUpdates)
+    if (!stats) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Stats not found')
+    }
+
+    const updatedStats = await StatsModel.getStatById(id)
+    if (!updatedStats) {
+      throw new ApiError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Error fetching updated stats'
+      )
+    }
+
+    return updatedStats
+  } catch (error) {
+    console.error('Error updating stats:', error)
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error updating stats')
+  }
+}
 
 const deleteStats = async (id: number): Promise<IStats> => {
   try {
     const stats = await StatsModel.deleteStat(id)
+
+    if (stats.image) {
+      const imagePath = path.join(__dirname, '../../../', stats.image)
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath)
+      }
+    }
     if (!stats) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Stats not found')
     }
