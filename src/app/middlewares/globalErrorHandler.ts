@@ -1,5 +1,4 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
-import { Error } from 'mongoose'
 import { ZodError } from 'zod'
 import config from '../../config'
 import ApiError from '../../errors/ApiError'
@@ -42,7 +41,7 @@ const globalErrorHandler: ErrorRequestHandler = (
           },
         ]
       : []
-  } else if (error instanceof Error) {
+  } else if (error) {
     message = error?.message
     errorMessages = error?.message
       ? [

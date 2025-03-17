@@ -1,41 +1,15 @@
-import express from 'express';
-import { upload } from '../../middlewares/uploadImage'; 
-import validateRequest from '../../middlewares/validateRequest';  
-import { ArticleController } from './article.controller';  
-import { articleValidation } from './article.validation'; 
+import express from 'express'
+import { upload } from '../../middlewares/uploadImage'
+import { ArticleController } from './article.controller'
+const router = express.Router()
 
-const router = express.Router();
+router.post('/', upload.single('image'), ArticleController.createArticle)
+router.get('/', ArticleController.getAllArticles)
 
+router.get('/:id', ArticleController.getArticleById)
 
-router.post(
-  '/',
-  upload.single('image'), 
-  validateRequest(articleValidation.createArticle),  
-  ArticleController.createArticle  
-);
-router.get(
-  '/',
-  validateRequest(articleValidation.getAllArticles),
-  ArticleController.getAllArticles 
-);
+router.patch('/:id', upload.single('image'), ArticleController.updateArticle)
 
-router.get(
-  '/:id',
-  validateRequest(articleValidation.getArticleById),  
-  ArticleController.getArticleById  
-);
+router.delete('/:id', ArticleController.deleteArticle)
 
-router.patch(
-  '/:id',
-  upload.single('image'),  
-  validateRequest(articleValidation.updateArticle),
-  ArticleController.updateArticle  
-);
-
-router.delete(
-  '/:id',
-  validateRequest(articleValidation.deleteArticle),  
-  ArticleController.deleteArticle 
-);
-
-export const ArticleRoutes = router;  
+export const ArticleRoutes = router
