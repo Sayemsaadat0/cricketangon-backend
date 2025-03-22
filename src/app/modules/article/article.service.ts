@@ -36,7 +36,7 @@ const createArticle = async (
     } else {
       article.isApproved = true
     }
-    // console.log(existingUser)
+ 
 
     if (file) {
       article.image = `/uploads/${file.filename}`
@@ -92,8 +92,6 @@ const getAllArticles = async (
     const query = `SELECT id, title, authorName, image,isApproved, description, categoryId, userId, created_at FROM articles ${whereClause} ${sortConditions} LIMIT ? OFFSET ?`
     queryParams.push(limit, skip)
 
-    // console.log('Executing Query:', query)
-    // console.log('Query Parameters:', queryParams)
 
     const [results] = await connection.promise().query(query, queryParams)
     const articles = results as RowDataPacket[]
@@ -112,7 +110,7 @@ const getAllArticles = async (
 
     const countQuery = `SELECT COUNT(*) AS total FROM articles ${whereClause}`
     const countParams = queryParams.slice(0, -2)
-    console.log('Count Query:', countQuery)
+
 
     const [countResults] = await connection
       .promise()
