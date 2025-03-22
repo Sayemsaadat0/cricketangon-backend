@@ -4,7 +4,7 @@ type IOptions = {
   page?: number
   limit?: number
   sortBy?: string
-  sortOrder?: 'desc'
+  sortOrder?: 'asc' | 'desc'
 }
 
 type IOptionsResult = {
@@ -12,7 +12,7 @@ type IOptionsResult = {
   limit: number
   skip: number
   sortBy: string
-  sortOrder: 'desc'
+  sortOrder: 'asc' | 'desc'
 }
 
 const calculatePagination = (options: IOptions): IOptionsResult => {
